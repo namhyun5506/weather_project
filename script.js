@@ -6,6 +6,11 @@ const cityInput = document.getElementById("cityInput");
 const searchBtn = document.getElementById("searchBtn");
 const tempEl = document.getElementById("temp");
 const descEl = document.getElementById("description");
+const unitButtons = document.querySelectorAll(".unit-btn");
+
+// 현재 온도(섭씨 기준)와 선택된 단위 상태
+let currentTempC = null; // 항상 °C 기준으로 저장
+let currentUnit = "C";   // "C" 또는 "F"
 
 /**
  * 오류 처리 함수
@@ -16,14 +21,32 @@ function handleError(error) {
 }
 
 /**
+ * 현재 상태(currentTempC, currentUnit)에 따라
+ * 화면에 표시할 온도 텍스트를 업데이트
+ */
+function renderTemperature() {
+  if (currentTempC === null) {
+    tempEl.textContent = "";
+    return;
+  }
+
+  if (currentUnit === "C") {
+    tempEl.textContent = `${Math.round(currentTempC)}°C`;
+  } else {
+    const tempF = currentTempC * (9 / 5) + 32;
+    tempEl.textContent = `${Math.round(tempF)}°F`;
+  }
+}
+
+/**
  * 날씨 정보 가져오기
  * @param {string} city - 조회할 도시 이름
  */
 async function getWeather(city) {
   if (!city) {
-    // 도시명이 비어있을 경우 간단 처리
     tempEl.textContent = "";
     descEl.textContent = "도시명을 입력해주세요.";
+    currentTempC = null;
     return;
   }
 
@@ -46,10 +69,12 @@ async function getWeather(city) {
     const temperature = data.main?.temp;
     const description = data.weather?.[0]?.description;
 
-    // DOM 업데이트
     if (typeof temperature === "number") {
-      tempEl.textContent = `${Math.round(temperature)}°C`;
+      // 항상 섭씨로 저장
+      currentTempC = temperature;
+      renderTemperature(); // 현재 선택된 단위 기준으로 출력
     } else {
+      currentTempC = null;
       tempEl.textContent = "";
     }
 
@@ -60,16 +85,17 @@ async function getWeather(city) {
     }
   } catch (error) {
     handleError(error);
+    currentTempC = null;
     tempEl.textContent = "";
     descEl.textContent = "날씨 정보를 가져오지 못했습니다.";
   }
 }
 
 /**
- * 검색 버튼 및 Enter 키 이벤트 연결
+ * 검색 버튼 및 Enter 키 / 단위 전환 이벤트 연결
  */
 function setupEventListeners() {
-  // 버튼 클릭 시
+  // 버튼 클릭 시 검색
   searchBtn.addEventListener("click", () => {
     const city = cityInput.value.trim();
     getWeather(city);
@@ -81,6 +107,25 @@ function setupEventListeners() {
       const city = cityInput.value.trim();
       getWeather(city);
     }
+  });
+
+  // 단위 전환 버튼(°C, °F) 클릭 시 단위 변경
+  unitButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const selectedUnit = btn.dataset.unit; // "C" 또는 "F"
+
+      if (currentUnit === selectedUnit) return; // 동일 단위면 무시
+
+      currentUnit = selectedUnit;
+
+      // active 클래스 토글
+      unitButtons.forEach((b) => {
+        b.classList.toggle("active", b.dataset.unit === currentUnit);
+      });
+
+      // 현재 저장된 온도가 있으면 단위만 재렌더링
+      renderTemperature();
+    });
   });
 }
 

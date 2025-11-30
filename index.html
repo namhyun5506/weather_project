@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>날씨 조회</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <section class="weather-card">
+      <h1 class="title">날씨 웹사이트</h1>
+
+      <div class="search-box">
+        <input
+          type="text"
+          id="cityInput"
+          class="search-input"
+          placeholder="도시명을 입력하세요 (예: Seoul)"
+          autocomplete="off"
+        />
+        <button id="searchBtn" class="search-btn">검색</button>
+      </div>
+
+      <div class="weather-info">
+        <div class="temp-wrapper">
+          <span id="temp" class="temp"></span>
+        </div>
+        <div class="desc-wrapper">
+          <span id="description" class="description"></span>
+        </div>
+      </div>
+
+      <p class="hint">OpenWeatherMap 더미 API URL 사용 예제입니다.</p>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

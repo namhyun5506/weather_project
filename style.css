@@ -20,6 +20,11 @@ body {
   background: linear-gradient(135deg, #e0f2fe, #f1f5f9);
 }
 
+/* 공통 숨김 클래스 (초기 화면용) */
+.hidden {
+  display: none;
+}
+
 /* 앱 전체를 중앙 배치 */
 .app {
   min-height: 100vh;
@@ -32,7 +37,7 @@ body {
 /* 카드 스타일 레이아웃 */
 .weather-card {
   width: 100%;
-  max-width: 420px;
+  max-width: 420px; /* 여기 값 키우면 전체 박스가 더 넓어짐 */
   background: rgba(255, 255, 255, 0.9);
   border-radius: 1.25rem;
   padding: 1.75rem 1.5rem 1.5rem;
@@ -53,7 +58,7 @@ body {
 .search-box {
   display: flex;
   gap: 0.5rem;
-  margin-bottom: 0.9rem;
+  margin-bottom: 0.6rem;
 }
 
 .search-input {
@@ -99,6 +104,39 @@ body {
   opacity: 0.9;
 }
 
+/* 현재 위치 + 단위 토글 한 줄 */
+.controls-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.8rem;
+}
+
+/* 현재 위치 버튼 */
+.geo-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.8rem;
+  background-color: #e0f2fe;
+  color: #0369a1;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease,
+    box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.geo-btn:hover {
+  background-color: #bae6fd;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.1);
+}
+
+.geo-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+  box-shadow: none;
+}
+
 /* 단위 전환 토글 */
 .unit-toggle {
   display: inline-flex;
@@ -108,7 +146,6 @@ body {
   background-color: #eff6ff;
   border-radius: 999px;
   padding: 0.15rem;
-  margin: 0 auto 1rem;
   border: 1px solid #dbeafe;
 }
 
@@ -131,14 +168,40 @@ body {
   box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
 }
 
-/* 날씨 정보 영역 */
+/* 현재 날씨 정보 영역 */
 .weather-info {
   text-align: center;
   padding: 1.1rem 0 0.5rem;
   border-top: 1px solid #e5e7eb;
-  min-height: 90px;
+  min-height: 130px;
 }
 
+/* 오늘 / 날짜 / 위치 헤더 */
+.current-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  margin-bottom: 0.35rem;
+}
+
+.current-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.current-date {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.current-location {
+  font-size: 0.85rem;
+  color: #111827;
+}
+
+/* 온도/설명 */
 .temp-wrapper {
   margin-bottom: 0.25rem;
 }
@@ -159,6 +222,57 @@ body {
   font-size: 1rem;
   font-weight: 500;
   color: #4b5563;
+}
+
+/* 3일 단기 예보 */
+.forecast-section {
+  margin-top: 1.1rem;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 0.9rem;
+}
+
+.forecast-title {
+  margin: 0 0 0.6rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1f2933;
+}
+
+/* 카드 리스트: 모바일에서는 가로 스크롤, PC에서는 균등 배치 */
+.forecast-list {
+  display: flex;
+  gap: 0.6rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.forecast-card {
+  min-width: 95px;
+  flex: 0 0 auto;
+  background-color: #f9fafb;
+  border-radius: 0.9rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid #e5e7eb;
+  text-align: center;
+}
+
+.forecast-date {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #4b5563;
+  margin-bottom: 0.15rem;
+}
+
+.forecast-temp {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.15rem;
+}
+
+.forecast-desc {
+  font-size: 0.75rem;
+  color: #6b7280;
 }
 
 /* 힌트 텍스트 */
@@ -182,6 +296,15 @@ body {
 
   .temp {
     font-size: 2.8rem;
+  }
+
+  .forecast-list {
+    overflow-x: visible;
+  }
+
+  .forecast-card {
+    min-width: 0;
+    flex: 1 1 0;
   }
 }
 

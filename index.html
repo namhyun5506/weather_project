@@ -9,26 +9,38 @@
 <body>
   <main class="app">
     <section class="weather-card">
-      <h1 class="title">날씨 웹사이트</h1>
+      <h1 class="title">원하는 지역을 검색해주세요</h1>
 
       <div class="search-box">
         <input
           type="text"
           id="cityInput"
           class="search-input"
-          placeholder="도시명을 입력하세요 (예: Seoul)"
+          placeholder="도시명을 한글 또는 영어로 입력 (예: 서울, Seoul)"
           autocomplete="off"
         />
         <button id="searchBtn" class="search-btn">검색</button>
       </div>
 
-      <!-- 단위 전환 버튼 -->
-      <div class="unit-toggle" aria-label="온도 단위 선택">
-        <button class="unit-btn active" data-unit="C">°C</button>
-        <button class="unit-btn" data-unit="F">°F</button>
+      <!-- 현재 위치 + 단위 토글 한 줄 -->
+      <div class="controls-row">
+        <button id="geoBtn" class="geo-btn">현재 위치로 찾기</button>
+
+        <div class="unit-toggle" aria-label="온도 단위 선택">
+          <button class="unit-btn active" data-unit="C">°C</button>
+          <button class="unit-btn" data-unit="F">°F</button>
+        </div>
       </div>
 
-      <div class="weather-info">
+      <!-- 현재 날씨 (초기엔 숨김) -->
+      <div class="weather-info hidden" id="weatherInfo">
+        <!-- 오늘 / 날짜 / 위치 -->
+        <div class="current-header">
+          <span id="currentLabel" class="current-label">오늘</span>
+          <span id="currentDate" class="current-date"></span>
+          <span id="currentLocation" class="current-location"></span>
+        </div>
+
         <div class="temp-wrapper">
           <span id="temp" class="temp"></span>
         </div>
@@ -36,6 +48,14 @@
           <span id="description" class="description"></span>
         </div>
       </div>
+
+      <!-- 3일 단기 예보 (초기엔 숨김) -->
+      <section class="forecast-section hidden" id="forecastSection">
+        <h2 class="forecast-title">3일 단기 예보</h2>
+        <div id="forecastList" class="forecast-list">
+          <!-- JS에서 3개 카드 반복 생성 -->
+        </div>
+      </section>
 
       <p class="hint">OpenWeatherMap 더미 API URL 사용 예제입니다.</p>
     </section>

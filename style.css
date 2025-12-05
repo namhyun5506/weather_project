@@ -37,7 +37,7 @@ body {
 /* 카드 스타일 레이아웃 */
 .weather-card {
   width: 100%;
-  max-width: 420px; /* 여기 값 키우면 전체 박스가 더 넓어짐 */
+  max-width: 1000px;                 /* ★ 여기 1000px로 확장 */
   background: rgba(255, 255, 255, 0.9);
   border-radius: 1.25rem;
   padding: 1.75rem 1.5rem 1.5rem;
@@ -173,7 +173,7 @@ body {
   text-align: center;
   padding: 1.1rem 0 0.5rem;
   border-top: 1px solid #e5e7eb;
-  min-height: 130px;
+  min-height: 190px;
 }
 
 /* 오늘 / 날짜 / 위치 헤더 */
@@ -182,7 +182,7 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 0.15rem;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.3rem;
 }
 
 .current-label {
@@ -201,9 +201,19 @@ body {
   color: #111827;
 }
 
+/* 현재 날씨 아이콘 */
+.current-icon-wrapper {
+  margin-bottom: 0.25rem;
+}
+
+.weather-icon {
+  width: 64px;
+  height: 64px;
+}
+
 /* 온도/설명 */
 .temp-wrapper {
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.15rem;
 }
 
 .temp {
@@ -211,6 +221,21 @@ body {
   font-size: 2.4rem;
   font-weight: 700;
   color: #0f172a;
+}
+
+/* 오늘 최고/최저 + 강수확률 */
+.today-range-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-bottom: 0.25rem;
+}
+
+.today-range,
+.today-pop {
+  white-space: nowrap;
 }
 
 .desc-wrapper {
@@ -224,7 +249,68 @@ body {
   color: #4b5563;
 }
 
-/* 3일 단기 예보 */
+/* 시간별 예보 24시간 */
+.hourly-section {
+  margin-top: 1.1rem;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 0.9rem;
+}
+
+.hourly-title {
+  margin: 0 0 0.6rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1f2933;
+}
+
+.hourly-list {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;    /* 항상 가로 스크롤 */
+  padding-bottom: 0.35rem;
+}
+
+.hourly-card {
+  min-width: 72px;
+  flex: 0 0 auto;
+  background-color: #f9fafb;
+  border-radius: 0.75rem;
+  padding: 0.45rem 0.5rem;
+  border: 1px solid #e5e7eb;
+  text-align: center;
+}
+
+.hourly-time {
+  font-size: 0.75rem;
+  color: #4b5563;
+  margin-bottom: 0.1rem;
+}
+
+.hourly-icon {
+  width: 32px;
+  height: 32px;
+  margin-bottom: 0.1rem;
+}
+
+.hourly-temp {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 0.05rem;
+}
+
+.hourly-desc {
+  font-size: 0.7rem;
+  color: #6b7280;
+  margin-bottom: 0.05rem;
+}
+
+.hourly-pop {
+  font-size: 0.7rem;
+  color: #6b7280;
+}
+
+/* 3일 단기 예보 (내일/모레/글피) */
 .forecast-section {
   margin-top: 1.1rem;
   border-top: 1px solid #e5e7eb;
@@ -238,7 +324,7 @@ body {
   color: #1f2933;
 }
 
-/* 카드 리스트: 모바일에서는 가로 스크롤, PC에서는 균등 배치 */
+/* 카드 리스트 */
 .forecast-list {
   display: flex;
   gap: 0.6rem;
@@ -263,14 +349,21 @@ body {
   margin-bottom: 0.15rem;
 }
 
+.forecast-icon {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 0.1rem;
+}
+
 .forecast-temp {
   font-size: 1.1rem;
   font-weight: 700;
   color: #0f172a;
-  margin-bottom: 0.15rem;
+  margin-bottom: 0.1rem;
 }
 
-.forecast-desc {
+.forecast-range,
+.forecast-pop {
   font-size: 0.75rem;
   color: #6b7280;
 }
@@ -287,7 +380,7 @@ body {
 @media (min-width: 768px) {
   .weather-card {
     padding: 2rem 2rem 1.75rem;
-    max-width: 460px;
+    max-width: 1000px;          /* ★ 여기서도 1000px 유지 */
   }
 
   .title {
@@ -306,16 +399,20 @@ body {
     min-width: 0;
     flex: 1 1 0;
   }
+
+  .hourly-card {
+    min-width: 80px;
+  }
 }
 
-/* 반응형: 데스크탑에서 여백 조정 및 약간 더 크게 */
+/* 반응형: 데스크탑에서 여백 조정 */
 @media (min-width: 1024px) {
   .app {
     padding: 2.5rem;
   }
 
   .weather-card {
-    max-width: 500px;
+    max-width: 1000px;          /* ★ 데스크탑에서도 1000px */
     border-radius: 1.5rem;
   }
 }

@@ -41,17 +41,42 @@
           <span id="currentLocation" class="current-location"></span>
         </div>
 
+        <!-- 현재 날씨 아이콘 -->
+        <div class="current-icon-wrapper">
+          <img
+            id="currentIcon"
+            class="weather-icon hidden"
+            src=""
+            alt="현재 날씨 아이콘"
+          />
+        </div>
+
         <div class="temp-wrapper">
           <span id="temp" class="temp"></span>
         </div>
+
+        <!-- 오늘 최고/최저 + 강수확률 -->
+        <div class="today-range-wrapper">
+          <span id="todayRange" class="today-range"></span>
+          <span id="todayPop" class="today-pop"></span>
+        </div>
+
         <div class="desc-wrapper">
           <span id="description" class="description"></span>
         </div>
       </div>
 
-      <!-- 3일 단기 예보 (초기엔 숨김) -->
+      <!-- 시간별 예보 24시간 (현재 ~ +24시간) -->
+      <section class="hourly-section hidden" id="hourlySection">
+        <h2 class="hourly-title">시간별 예보 (24시간)</h2>
+        <div id="hourlyList" class="hourly-list">
+          <!-- JS에서 24개 카드 생성 -->
+        </div>
+      </section>
+
+      <!-- 3일 단기 예보 (내일/모레/글피) -->
       <section class="forecast-section hidden" id="forecastSection">
-        <h2 class="forecast-title">3일 단기 예보</h2>
+        <h2 class="forecast-title">3일 단기 예보 (내일 ~ 글피)</h2>
         <div id="forecastList" class="forecast-list">
           <!-- JS에서 3개 카드 반복 생성 -->
         </div>

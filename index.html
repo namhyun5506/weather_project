@@ -32,7 +32,7 @@
         </div>
       </div>
 
-      <!-- 검색창 + 검색 버튼 (⭐ 검색창 안 즐겨찾기 버튼 제거됨) -->
+      <!-- 검색창 + 검색 버튼 -->
       <div class="search-box">
         <div class="search-input-wrapper">
           <input
@@ -49,6 +49,14 @@
       <div id="recentsDropdown" class="recents-dropdown hidden">
         <div class="list-header">
           <span class="list-label">최근 검색</span>
+          <!-- ✅ 최근 검색 전체 삭제 버튼 -->
+          <button
+            id="clearRecentsBtn"
+            class="clear-recents-btn"
+            type="button"
+          >
+            전체 삭제
+          </button>
         </div>
         <div id="recentsList" class="chip-list"></div>
       </div>
@@ -71,7 +79,7 @@
               <span class="fav-section-star">★</span>
               즐겨찾기
             </span>
-            <!-- ✅ 여기 +추가 버튼 배치 -->
+            <!-- ✅ 즐겨찾기 추가 버튼 -->
             <button
               id="addFavoriteBtn"
               class="fav-add-btn"

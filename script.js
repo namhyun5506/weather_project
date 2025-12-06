@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const favoritesListEl = document.getElementById("favoritesList");
   const recentsListEl = document.getElementById("recentsList");
   const addFavoriteBtn = document.getElementById("addFavoriteBtn");
+  const clearRecentsBtn = document.getElementById("clearRecentsBtn");
   const themeButtons = document.querySelectorAll(".theme-btn");
   const recentsDropdown = document.getElementById("recentsDropdown");
   const titleEl = document.querySelector(".title");
@@ -173,7 +174,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return favorites.some((f) => f.label === label);
   }
 
-  // +추가 버튼에 단순히 강조만 줄 수 있음(현재 즐겨찾기인지 여부)
   function updateFavoriteStars() {
     if (!addFavoriteBtn) return;
     const label = getCurrentFavoriteLabel();
@@ -488,6 +488,12 @@ document.addEventListener("DOMContentLoaded", () => {
       recents.splice(idx, 1);
     }
     recents.unshift(label);
+
+    // ✅ 최대 10개까지만 유지
+    if (recents.length > 10) {
+      recents = recents.slice(0, 10);
+    }
+
     renderRecents();
   }
 
@@ -991,6 +997,11 @@ document.addEventListener("DOMContentLoaded", () => {
         )
         .filter(Boolean);
 
+      // ✅ 복원 시에도 최대 10개까지만 유지
+      if (recents.length > 10) {
+        recents = recents.slice(0, 10);
+      }
+
       renderFavorites();
       renderRecents();
 
@@ -1043,8 +1054,9 @@ document.addEventListener("DOMContentLoaded", () => {
         en: lastLocationEn,
       };
       favorites = [newFav, ...favorites];
-      if (favorites.length > 5) {
-        favorites = favorites.slice(0, 5);
+      // ✅ 즐겨찾기 최대 8개
+      if (favorites.length > 8) {
+        favorites = favorites.slice(0, 8);
       }
     }
 
@@ -1215,6 +1227,15 @@ document.addEventListener("DOMContentLoaded", () => {
     if (addFavoriteBtn) {
       addFavoriteBtn.addEventListener("click", () => {
         toggleCurrentFavorite();
+      });
+    }
+
+    if (clearRecentsBtn) {
+      clearRecentsBtn.addEventListener("click", (event) => {
+        event.stopPropagation();
+        recents = [];
+        renderRecents();
+        saveState();
       });
     }
 

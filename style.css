@@ -283,7 +283,7 @@ body {
   color: #facc15;
 }
 
-/* ✅ 즐겨찾기 +추가 버튼 */
+/* 즐겨찾기 +추가 버튼 */
 .fav-add-btn {
   border: none;
   border-radius: 999px;
@@ -302,10 +302,29 @@ body {
   transform: translateY(-1px);
 }
 
-/* 즐겨찾기된 상태일 때(옵션) */
+/* 즐겨찾기 활성 상태 표시(옵션) */
 .fav-add-btn.fav-on {
   background-color: #fee2e2;
   color: #b91c1c;
+}
+
+/* ✅ 최근검색 전체 삭제 버튼 */
+.clear-recents-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.7rem;
+  background-color: #fee2e2;
+  color: #b91c1c;
+  cursor: pointer;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease,
+    transform 0.1s ease, opacity 0.15s ease;
+}
+
+.clear-recents-btn:hover {
+  background-color: #fecaca;
+  box-shadow: 0 2px 5px rgba(248, 113, 113, 0.5);
+  transform: translateY(-1px);
 }
 
 .chip-list {
@@ -795,6 +814,16 @@ body.dark .fav-add-btn:hover {
 body.dark .fav-add-btn.fav-on {
   background-color: #7f1d1d;
   color: #fee2e2;
+}
+
+/* 최근검색 전체삭제 버튼(다크 모드) */
+body.dark .clear-recents-btn {
+  background-color: #7f1d1d;
+  color: #fee2e2;
+}
+
+body.dark .clear-recents-btn:hover {
+  background-color: #991b1b;
 }
 
 /* 즐겨찾기 제목 앞 별은 항상 노란색 */

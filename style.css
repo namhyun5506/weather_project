@@ -1,4 +1,4 @@
-/* 기본 설정 (Mobile First, 최소 폭 375px 고려) */
+/* 기본 설정 */
 *,
 *::before,
 *::after {
@@ -16,16 +16,14 @@ body {
 }
 
 body {
-  /* 깔끔한 그라디언트 배경 */
   background: linear-gradient(135deg, #e0f2fe, #f1f5f9);
 }
 
-/* 공통 숨김 클래스 (초기 화면용) */
 .hidden {
   display: none;
 }
 
-/* 앱 전체를 중앙 배치 */
+/* 앱 전체 중앙 배치 */
 .app {
   min-height: 100vh;
   display: flex;
@@ -34,7 +32,6 @@ body {
   padding: 1.5rem;
 }
 
-/* 카드 스타일 레이아웃 */
 .weather-card {
   width: 100%;
   max-width: 1000px;
@@ -45,7 +42,7 @@ body {
   backdrop-filter: blur(10px);
 }
 
-/* 상단 헤더 (제목 + 다크모드 토글) */
+/* 헤더 (홈 + 테마) */
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -53,7 +50,6 @@ body {
   margin-bottom: 0.8rem;
 }
 
-/* 제목 */
 .title {
   margin: 0;
   text-align: left;
@@ -63,7 +59,27 @@ body {
   cursor: pointer;
 }
 
-/* 다크 모드 토글 (°C/°F 토글과 동일 스타일) */
+.home-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background-color: #eff6ff;
+  border: 1px solid #dbeafe;
+  font-size: 1.2rem;
+  transition: background-color 0.15s ease, transform 0.1s ease,
+    box-shadow 0.15s ease;
+}
+
+.title:hover .home-icon {
+  background-color: #e0f2fe;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
+  transform: translateY(-1px);
+}
+
+/* 테마 토글 */
 .theme-toggle-group {
   display: inline-flex;
   justify-content: center;
@@ -78,20 +94,29 @@ body {
 .theme-btn {
   border: none;
   background: transparent;
-  padding: 0.35rem 0.8rem;
+  width: 32px;
+  height: 32px;
+  padding: 0;
   border-radius: 999px;
   font-size: 0.8rem;
-  font-weight: 500;
-  color: #64748b;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
   transition: background-color 0.15s ease, color 0.15s ease,
-    box-shadow 0.15s ease;
+    box-shadow 0.15s ease, transform 0.1s ease;
 }
 
 .theme-btn.active {
   background: white;
   color: #0f172a;
   box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
+  transform: translateY(-1px);
+}
+
+.theme-icon {
+  font-size: 1.1rem;
 }
 
 /* 검색 영역 */
@@ -101,9 +126,14 @@ body {
   margin-bottom: 0.4rem;
 }
 
-.search-input {
+.search-input-wrapper {
+  position: relative;
   flex: 1;
-  padding: 0.7rem 0.85rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
   border-radius: 999px;
   border: 1px solid #cbd5f5;
   font-size: 0.95rem;
@@ -119,6 +149,7 @@ body {
   background-color: #ffffff;
 }
 
+/* 검색 버튼 */
 .search-btn {
   padding: 0.7rem 1rem;
   border-radius: 999px;
@@ -154,7 +185,7 @@ body {
   box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
 }
 
-/* 현재 위치 + 단위 토글 한 줄 */
+/* 현재 위치 + 단위 토글 */
 .controls-row {
   display: flex;
   justify-content: space-between;
@@ -163,7 +194,6 @@ body {
   margin-bottom: 0.5rem;
 }
 
-/* 현재 위치 버튼 */
 .geo-btn {
   border: none;
   border-radius: 999px;
@@ -187,7 +217,7 @@ body {
   box-shadow: none;
 }
 
-/* 단위 전환 토글 */
+/* 단위 전환 */
 .unit-toggle {
   display: inline-flex;
   justify-content: center;
@@ -218,7 +248,7 @@ body {
   box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
 }
 
-/* 즐겨찾기 / 리스트 공통 */
+/* 리스트 영역 */
 .lists-row {
   display: flex;
   flex-direction: column;
@@ -242,22 +272,40 @@ body {
 .list-label {
   font-weight: 600;
   color: #6b7280;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
-.add-fav-btn {
+/* 즐겨찾기 제목 앞 별(항상 노란색) */
+.fav-section-star {
+  font-size: 0.9rem;
+  color: #facc15;
+}
+
+/* ✅ 즐겨찾기 +추가 버튼 */
+.fav-add-btn {
   border: none;
-  background: #e5f4ff;
-  color: #0369a1;
   border-radius: 999px;
-  padding: 0.15rem 0.6rem;
+  padding: 0.2rem 0.7rem;
   font-size: 0.75rem;
+  background-color: #e5f2ff;
+  color: #2563eb;
   cursor: pointer;
-  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease,
+    box-shadow 0.15s ease, transform 0.1s ease;
 }
 
-.add-fav-btn:hover {
+.fav-add-btn:hover {
   background-color: #dbeafe;
   box-shadow: 0 2px 6px rgba(148, 163, 184, 0.4);
+  transform: translateY(-1px);
+}
+
+/* 즐겨찾기된 상태일 때(옵션) */
+.fav-add-btn.fav-on {
+  background-color: #fee2e2;
+  color: #b91c1c;
 }
 
 .chip-list {
@@ -290,7 +338,7 @@ body {
 }
 
 .chip-close {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: #9ca3af;
   padding: 0 2px;
 }
@@ -304,7 +352,7 @@ body {
   color: #9ca3af;
 }
 
-/* 현재 날씨 정보 영역 */
+/* 현재 날씨 */
 .weather-info {
   text-align: center;
   padding: 1.1rem 0 0.5rem;
@@ -312,7 +360,20 @@ body {
   min-height: 190px;
 }
 
-/* 오늘 / 날짜 / 위치 헤더 */
+/* 생활지수 */
+.life-index-wrapper {
+  margin-top: 0;
+  margin-bottom: 0.35rem;
+  min-height: 1.4rem;
+}
+
+.life-index {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+/* 오늘 / 날짜 / 위치 */
 .current-header {
   display: flex;
   flex-direction: column;
@@ -337,7 +398,7 @@ body {
   color: #111827;
 }
 
-/* 현재 날씨 아이콘 */
+/* 아이콘 */
 .current-icon-wrapper {
   margin-bottom: 0.25rem;
 }
@@ -347,7 +408,7 @@ body {
   height: 64px;
 }
 
-/* 온도/설명 */
+/* 현재 온도 */
 .temp-wrapper {
   margin-bottom: 0.15rem;
 }
@@ -356,7 +417,6 @@ body {
   display: inline-block;
   font-size: 2.4rem;
   font-weight: 700;
-  color: #0f172a;
 }
 
 /* 오늘 최고/최저 + 강수확률 */
@@ -374,7 +434,7 @@ body {
   white-space: nowrap;
 }
 
-/* 체감온도 / 습도 / 일출일몰 */
+/* 체감온도/습도/일출일몰 */
 .extra-info-row {
   display: flex;
   justify-content: center;
@@ -398,13 +458,9 @@ body {
 
 .extra-value {
   font-size: 0.85rem;
-  color: #0f172a;
 }
 
-.extra-value.small {
-  font-size: 0.78rem;
-}
-
+/* 설명 */
 .desc-wrapper {
   min-height: 1.25rem;
 }
@@ -416,7 +472,16 @@ body {
   color: #4b5563;
 }
 
-/* 시간별 예보 24시간 */
+/* 온도 색상 */
+.temp-cold {
+  color: #2563eb !important;
+}
+
+.temp-warm {
+  color: #dc2626 !important;
+}
+
+/* 시간별 예보 */
 .hourly-section {
   margin-top: 1.1rem;
   border-top: 1px solid #e5e7eb;
@@ -462,7 +527,6 @@ body {
 .hourly-temp {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #0f172a;
   margin-bottom: 0.05rem;
 }
 
@@ -477,7 +541,7 @@ body {
   color: #6b7280;
 }
 
-/* 3일 단기 예보 */
+/* 3일 예보 */
 .forecast-section {
   margin-top: 1.1rem;
   border-top: 1px solid #e5e7eb;
@@ -491,7 +555,6 @@ body {
   color: #1f2933;
 }
 
-/* 카드 리스트 */
 .forecast-list {
   display: flex;
   gap: 0.6rem;
@@ -525,25 +588,34 @@ body {
 .forecast-temp {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #0f172a;
   margin-bottom: 0.1rem;
 }
 
 .forecast-range,
-.forecast-pop {
+.forecast-pop,
+.forecast-desc {
   font-size: 0.75rem;
   color: #6b7280;
 }
 
-/* 힌트 텍스트 */
-.hint {
-  text-align: center;
-  margin-top: 0.75rem;
-  font-size: 0.75rem;
-  color: #9ca3af;
+/* 스크롤바 */
+.hourly-list::-webkit-scrollbar,
+.forecast-list::-webkit-scrollbar {
+  height: 6px;
 }
 
-/* 반응형: 태블릿 이상 */
+.hourly-list::-webkit-scrollbar-track,
+.forecast-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.hourly-list::-webkit-scrollbar-thumb,
+.forecast-list::-webkit-scrollbar-thumb {
+  background: #cbd5f5;
+  border-radius: 999px;
+}
+
+/* 반응형 */
 @media (min-width: 768px) {
   .weather-card {
     padding: 2rem 2rem 1.75rem;
@@ -582,7 +654,6 @@ body {
   }
 }
 
-/* 반응형: 데스크탑 */
 @media (min-width: 1024px) {
   .app {
     padding: 2.5rem;
@@ -613,14 +684,13 @@ body.dark .forecast-title {
   color: #e5e7eb;
 }
 
-body.dark .temp {
-  color: #e5e7eb;
+body.dark .home-icon {
+  background-color: #020617;
+  border-color: #1f2937;
 }
 
 body.dark .extra-value,
-body.dark .extra-value.small,
-body.dark .hourly-temp,
-body.dark .forecast-temp {
+body.dark .extra-value.small {
   color: #e5e7eb;
 }
 
@@ -628,10 +698,6 @@ body.dark .search-input {
   background-color: #020617;
   border-color: #1f2937;
   color: #e5e7eb;
-}
-
-body.dark .search-input::placeholder {
-  color: #6b7280;
 }
 
 body.dark .recents-dropdown {
@@ -644,7 +710,7 @@ body.dark .search-btn {
   box-shadow: 0 8px 18px rgba(34, 197, 94, 0.4);
 }
 
-/* 라이트모드와 비슷하게 또렷한 버튼 느낌 유지 */
+/* 다크 모드에서도 현재위치 버튼은 동일 색 */
 body.dark .geo-btn {
   background-color: #e0f2fe;
   color: #0369a1;
@@ -674,7 +740,7 @@ body.dark .forecast-section {
 }
 
 body.dark .hourly-list {
-  background-color: #020617;
+  background-color: #0f172a;
 }
 
 body.dark .hourly-card,
@@ -687,8 +753,8 @@ body.dark .description {
   color: #e5e7eb;
 }
 
-body.dark .hint {
-  color: #6b7280;
+body.dark .life-index {
+  color: #e5e7eb;
 }
 
 body.dark .chip-btn {
@@ -703,4 +769,35 @@ body.dark .chip-btn:hover {
 
 body.dark .list-label {
   color: #9ca3af;
+}
+
+/* 다크 모드 스크롤바 */
+body.dark .hourly-list::-webkit-scrollbar-track,
+body.dark .forecast-list::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+body.dark .hourly-list::-webkit-scrollbar-thumb,
+body.dark .forecast-list::-webkit-scrollbar-thumb {
+  background: #4b5563;
+}
+
+/* +추가 버튼(다크 모드) */
+body.dark .fav-add-btn {
+  background-color: #1f2937;
+  color: #e5e7eb;
+}
+
+body.dark .fav-add-btn:hover {
+  background-color: #111827;
+}
+
+body.dark .fav-add-btn.fav-on {
+  background-color: #7f1d1d;
+  color: #fee2e2;
+}
+
+/* 즐겨찾기 제목 앞 별은 항상 노란색 */
+body.dark .fav-section-star {
+  color: #facc15;
 }

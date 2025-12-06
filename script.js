@@ -1,14 +1,11 @@
-// DOM이 모두 만들어진 다음에 실행되도록 감싸기
 document.addEventListener("DOMContentLoaded", () => {
-  // OpenWeatherMap 설정
-  const API_KEY = "c048cc830faf9d37b921132c905c8906"; // TODO: 실제 키로 교체
+  const API_KEY = "c048cc830faf9d37b921132c905c8906"; // 실제 키로 교체
   const CURRENT_API_URL = "https://api.openweathermap.org/data/2.5/weather";
   const FORECAST_API_URL = "https://api.openweathermap.org/data/2.5/forecast";
   const GEO_DIRECT_API_URL = "https://api.openweathermap.org/geo/1.0/direct";
   const GEO_REVERSE_API_URL = "https://api.openweathermap.org/geo/1.0/reverse";
   const STORAGE_KEY = "weatherAppState";
 
-  // DOM 요소
   const cityInput = document.getElementById("cityInput");
   const searchBtn = document.getElementById("searchBtn");
   const geoBtn = document.getElementById("geoBtn");
@@ -29,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const feelsLikeEl = document.getElementById("feelsLike");
   const humidityEl = document.getElementById("humidity");
   const sunInfoEl = document.getElementById("sunInfo");
+  const lifeIndexEl = document.getElementById("lifeIndex");
 
   const favoritesListEl = document.getElementById("favoritesList");
   const recentsListEl = document.getElementById("recentsList");
@@ -37,18 +35,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const recentsDropdown = document.getElementById("recentsDropdown");
   const titleEl = document.querySelector(".title");
 
-  // 상태
-  let currentTempC = null; // 현재 온도(°C)
-  let currentFeelsLikeC = null; // 체감 온도(°C)
-  let currentHumidity = null; // 습도
-  let sunInfoText = ""; // 일출/일몰 문자열
+  let currentTempC = null;
+  let currentFeelsLikeC = null;
+  let currentHumidity = null;
+  let sunInfoText = "";
 
-  let currentUnit = "C"; // "C" 또는 "F"
-  let currentForecast = []; // 내일/모레/글피
-  let hourlyForecast = []; // 24시간
+  let currentUnit = "C";
+  let currentForecast = [];
+  let hourlyForecast = [];
   let todayHighC = null;
   let todayLowC = null;
-  let todayPop = null; // 0~1
+  let todayPop = null;
 
   let lastLat = null;
   let lastLon = null;
@@ -56,20 +53,18 @@ document.addEventListener("DOMContentLoaded", () => {
   let lastLocationEn = null;
 
   let favorites = []; // [{label, ko, en}]
-  let recents = []; // [label(string)]
+  let recents = []; // [label]
   let currentTheme = "light";
 
   let recentsHideTimeout = null;
 
   const dayNames = ["일", "월", "화", "수", "목", "금", "토"];
 
-  /** 아이콘 URL */
   function getIconUrl(iconCode) {
     if (!iconCode) return "";
     return `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
   }
 
-  /** 로컬 YYYY-MM-DD */
   function getLocalDateKey(date) {
     const y = date.getFullYear();
     const m = String(date.getMonth() + 1).padStart(2, "0");
@@ -77,10 +72,8 @@ document.addEventListener("DOMContentLoaded", () => {
     return `${y}-${m}-${d}`;
   }
 
-  /** 코드 → 한글 설명 */
   function getPrettyDescription(id, fallback = "") {
     const map = {
-      // Thunderstorm
       200: "약한 비를 동반한 뇌우",
       201: "비를 동반한 뇌우",
       202: "강한 비를 동반한 뇌우",
@@ -91,8 +84,6 @@ document.addEventListener("DOMContentLoaded", () => {
       230: "약한 이슬비를 동반한 뇌우",
       231: "이슬비를 동반한 뇌우",
       232: "강한 이슬비를 동반한 뇌우",
-
-      // Drizzle
       300: "약한 이슬비",
       301: "이슬비",
       302: "강한 이슬비",
@@ -102,8 +93,6 @@ document.addEventListener("DOMContentLoaded", () => {
       313: "소나기 비와 이슬비",
       314: "강한 소나기 비와 이슬비",
       321: "소나기 이슬비",
-
-      // Rain
       500: "약한 비",
       501: "비",
       502: "강한 비",
@@ -114,8 +103,6 @@ document.addEventListener("DOMContentLoaded", () => {
       521: "소나기 비",
       522: "강한 소나기 비",
       531: "불규칙한 소나기 비",
-
-      // Snow
       600: "약한 눈",
       601: "눈",
       602: "강한 눈",
@@ -127,8 +114,6 @@ document.addEventListener("DOMContentLoaded", () => {
       620: "약한 눈 소나기",
       621: "눈 소나기",
       622: "강한 눈 소나기",
-
-      // Atmosphere
       701: "옅은 안개(박무)",
       711: "연기",
       721: "연무(뿌연 대기)",
@@ -139,11 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
       762: "화산재",
       771: "돌풍",
       781: "토네이도",
-
-      // Clear
       800: "맑음",
-
-      // Clouds
       801: "구름 조금",
       802: "구름 약간",
       803: "구름 많음(튼구름)",
@@ -161,7 +142,45 @@ document.addEventListener("DOMContentLoaded", () => {
     return celsius * (9 / 5) + 32;
   }
 
-  /** 테마 적용 */
+  function applyTempColor(element, celsiusValue) {
+    if (!element) return;
+    element.classList.remove("temp-cold", "temp-warm");
+    if (typeof celsiusValue !== "number") return;
+
+    if (celsiusValue <= 0) {
+      element.classList.add("temp-cold");
+    } else {
+      element.classList.add("temp-warm");
+    }
+  }
+
+  // 현재 즐겨찾기 라벨: 검색창 → ko → en → 현재위치 텍스트
+  function getCurrentFavoriteLabel() {
+    if (cityInput) {
+      const fromInput = cityInput.value.trim();
+      if (fromInput) return fromInput;
+    }
+
+    if (lastLocationKo) return lastLocationKo;
+    if (lastLocationEn) return lastLocationEn;
+
+    const locText = currentLocationEl.textContent.trim();
+    if (!locText) return "";
+    return locText.split(",")[0].trim();
+  }
+
+  function isLabelFavorited(label) {
+    return favorites.some((f) => f.label === label);
+  }
+
+  // +추가 버튼에 단순히 강조만 줄 수 있음(현재 즐겨찾기인지 여부)
+  function updateFavoriteStars() {
+    if (!addFavoriteBtn) return;
+    const label = getCurrentFavoriteLabel();
+    const isFav = label && isLabelFavorited(label);
+    addFavoriteBtn.classList.toggle("fav-on", !!isFav);
+  }
+
   function applyTheme(theme) {
     currentTheme = theme === "dark" ? "dark" : "light";
     if (currentTheme === "dark") {
@@ -174,7 +193,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /** localStorage 저장 */
   function saveState() {
     const state = {
       lat: lastLat,
@@ -193,7 +211,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /** localStorage 불러오기 */
   function loadState() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -205,46 +222,44 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /** 오늘 메인 온도 */
   function renderTemperature() {
     if (currentTempC == null) {
       tempEl.textContent = "";
+      tempEl.classList.remove("temp-cold", "temp-warm");
       return;
     }
+
     if (currentUnit === "C") {
       tempEl.textContent = `${Math.round(currentTempC)}°C`;
     } else {
       tempEl.textContent = `${Math.round(toFahrenheit(currentTempC))}°F`;
     }
+    applyTempColor(tempEl, currentTempC);
   }
 
-  /** 오늘 체감온도 / 습도 / 일출일몰 */
   function renderExtraInfo() {
-    // 체감온도
     if (currentFeelsLikeC == null) {
       feelsLikeEl.textContent = "";
+      feelsLikeEl.classList.remove("temp-cold", "temp-warm");
     } else {
-      let feels = currentFeelsLikeC;
+      let display = currentFeelsLikeC;
       if (currentUnit === "F") {
-        feels = toFahrenheit(feels);
+        display = toFahrenheit(display);
       }
-      feelsLikeEl.textContent = `${Math.round(feels)}°`;
+      feelsLikeEl.textContent = `${Math.round(display)}°`;
+      applyTempColor(feelsLikeEl, currentFeelsLikeC);
     }
 
-    // 습도
     if (typeof currentHumidity === "number") {
       humidityEl.textContent = `${currentHumidity}%`;
     } else {
       humidityEl.textContent = "";
     }
 
-    // 일출/일몰
     sunInfoEl.textContent = sunInfoText || "";
   }
 
-  /** 오늘 최고/최저 + 강수확률 */
   function renderTodayExtras() {
-    // 최고/최저
     if (todayHighC == null || todayLowC == null) {
       todayRangeEl.textContent = "";
     } else {
@@ -259,13 +274,70 @@ document.addEventListener("DOMContentLoaded", () => {
       )}°`;
     }
 
-    // 강수확률
     if (typeof todayPop === "number") {
       const pct = Math.round(todayPop * 100);
       todayPopEl.textContent = `강수확률 ${pct}%`;
     } else {
       todayPopEl.textContent = "";
     }
+  }
+
+  function renderLifeIndex() {
+    if (!lifeIndexEl) return;
+
+    const tempC =
+      typeof currentFeelsLikeC === "number"
+        ? currentFeelsLikeC
+        : typeof currentTempC === "number"
+        ? currentTempC
+        : null;
+
+    if (tempC == null && typeof todayPop !== "number") {
+      lifeIndexEl.textContent = "";
+      return;
+    }
+
+    let message = "";
+
+    if (typeof todayPop === "number" && todayPop >= 0.7) {
+      message = "비가 올 가능성이 매우 높아요. 우산 꼭 챙기세요 ☔";
+    } else if (typeof todayPop === "number" && todayPop >= 0.4) {
+      message = "비가 올 수 있는 날이에요. 가벼운 우산을 챙기면 좋아요 ☂️";
+    }
+
+    if (tempC != null) {
+      if (!message) {
+        if (tempC >= 28) {
+          message =
+            "덥고 후덥지근한 날씨예요. 물 자주 마시고 실내에서 쉬는 걸 추천해요 🥵";
+        } else if (tempC >= 23) {
+          message = "야외 활동하기 좋은 따뜻한 날씨예요 😎";
+        } else if (tempC >= 15) {
+          message = "선선한 날씨예요. 가벼운 겉옷 하나 있으면 좋아요 🙂";
+        } else if (tempC >= 5) {
+          message = "조금 쌀쌀한 편이에요. 외투를 챙겨 입는 걸 추천해요 🧥";
+        } else {
+          message =
+            "많이 추운 날씨예요. 두꺼운 옷과 장갑, 모자를 챙기는 게 좋아요 🥶";
+        }
+      }
+
+      if (
+        typeof currentHumidity === "number" &&
+        currentHumidity >= 80 &&
+        tempC >= 22
+      ) {
+        message += " 습도가 높아서 다소 후덥지근하게 느껴질 수 있어요.";
+      } else if (
+        typeof currentHumidity === "number" &&
+        currentHumidity <= 30 &&
+        tempC <= 10
+      ) {
+        message += " 공기가 건조할 수 있어요. 보습과 수분 섭취를 신경 써주세요.";
+      }
+    }
+
+    lifeIndexEl.textContent = message;
   }
 
   function formatDateLabel(date) {
@@ -290,7 +362,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return `${h}:${m}`;
   }
 
-  /** 즐겨찾기 렌더링 */
   function renderFavorites() {
     favoritesListEl.innerHTML = "";
     if (!favorites.length) {
@@ -315,20 +386,19 @@ document.addEventListener("DOMContentLoaded", () => {
       btn.appendChild(labelSpan);
       btn.appendChild(closeSpan);
 
-      // 클릭하면 해당 즐겨찾기 지역으로 검색
       btn.addEventListener("click", () => {
         const query = fav.ko || fav.en || fav.label;
         if (query) {
-          if (cityInput) cityInput.value = query;
+          if (cityInput) cityInput.value = fav.ko || fav.en || fav.label;
           getWeather(query);
         }
       });
 
-      // X 클릭 시 삭제
       closeSpan.addEventListener("click", (event) => {
         event.stopPropagation();
         favorites.splice(index, 1);
         renderFavorites();
+        updateFavoriteStars();
         saveState();
       });
 
@@ -336,7 +406,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /** 최근 검색 렌더링 */
   function renderRecents() {
     recentsListEl.innerHTML = "";
     if (!recents.length) {
@@ -346,6 +415,7 @@ document.addEventListener("DOMContentLoaded", () => {
       recentsListEl.appendChild(span);
       return;
     }
+
     recents.forEach((label, index) => {
       const btn = document.createElement("button");
       btn.className = "chip-btn";
@@ -361,7 +431,6 @@ document.addEventListener("DOMContentLoaded", () => {
       btn.appendChild(labelSpan);
       btn.appendChild(closeSpan);
 
-      // 클릭하면 해당 검색어로 검색
       btn.addEventListener("click", () => {
         const cityPart = label.split(",")[0].trim();
         if (cityInput) cityInput.value = cityPart;
@@ -369,19 +438,49 @@ document.addEventListener("DOMContentLoaded", () => {
         getWeather(cityPart);
       });
 
-      // X 클릭 시 삭제
       closeSpan.addEventListener("click", (event) => {
         event.stopPropagation();
         recents.splice(index, 1);
         renderRecents();
         saveState();
+        if (recentsHideTimeout) {
+          clearTimeout(recentsHideTimeout);
+          recentsHideTimeout = null;
+        }
+        showRecentsDropdown();
       });
 
       recentsListEl.appendChild(btn);
     });
+
+    const maxLines = 3;
+    const approxLineHeight = 24;
+    const maxHeight = maxLines * approxLineHeight;
+
+    let safety = 0;
+    while (
+      recentsListEl.scrollHeight > maxHeight &&
+      recents.length > 0 &&
+      safety < 50
+    ) {
+      recents.pop();
+      if (recentsListEl.lastElementChild) {
+        recentsListEl.removeChild(recentsListEl.lastElementChild);
+      }
+      safety++;
+    }
+
+    if (!recents.length) {
+      recentsListEl.innerHTML = "";
+      const span = document.createElement("span");
+      span.className = "empty-text";
+      span.textContent = "없음";
+      recentsListEl.appendChild(span);
+    }
+
+    saveState();
   }
 
-  /** 최근 검색 추가 */
   function addRecent(label) {
     if (!label) return;
     const idx = recents.indexOf(label);
@@ -389,14 +488,9 @@ document.addEventListener("DOMContentLoaded", () => {
       recents.splice(idx, 1);
     }
     recents.unshift(label);
-    if (recents.length > 10) {
-      recents.length = 10;
-    }
     renderRecents();
-    saveState();
   }
 
-  /** 3일 단기 예보 렌더링 */
   function renderForecast() {
     forecastListEl.innerHTML = "";
     if (!currentForecast.length) return;
@@ -405,13 +499,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const card = document.createElement("article");
       card.className = "forecast-card";
 
-      // 대표 온도
       let displayTemp =
         currentUnit === "C"
           ? `${Math.round(item.tempC)}°C`
           : `${Math.round(toFahrenheit(item.tempC))}°F`;
 
-      // 최고/최저
       let high = item.highC;
       let low = item.lowC;
       if (currentUnit === "F") {
@@ -422,7 +514,6 @@ document.addEventListener("DOMContentLoaded", () => {
         low
       )}°`;
 
-      // 강수확률
       const popPct =
         typeof item.pop === "number"
           ? `${Math.round(item.pop * 100)}%`
@@ -443,10 +534,12 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
 
       forecastListEl.appendChild(card);
+
+      const tempSpan = card.querySelector(".forecast-temp");
+      applyTempColor(tempSpan, item.tempC);
     });
   }
 
-  /** 시간별 24시간 예보 렌더링 */
   function renderHourlyForecast() {
     hourlyListEl.innerHTML = "";
     if (!hourlyForecast.length) return;
@@ -479,10 +572,12 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
 
       hourlyListEl.appendChild(card);
+
+      const tempSpan = card.querySelector(".hourly-temp");
+      applyTempColor(tempSpan, item.tempC);
     });
   }
 
-  /** 지오코딩: 도시명 → 위도/경도 */
   async function getCoordinates(city) {
     const url = `${GEO_DIRECT_API_URL}?q=${encodeURIComponent(
       city
@@ -491,20 +586,18 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!res.ok) throw new Error(`지오코딩 HTTP 에러: ${res.status}`);
     const data = await res.json();
     if (!data.length) throw new Error("해당 도시를 찾을 수 없습니다.");
-    return data[0]; // { lat, lon, name, local_names?, ... }
+    return data[0];
   }
 
-  /** 리버스 지오코딩: 위도/경도 → 지역명 (한글 포함 가능) */
   async function getReverseGeocode(lat, lon) {
     const url = `${GEO_REVERSE_API_URL}?lat=${lat}&lon=${lon}&limit=1&appid=${API_KEY}`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`리버스 지오코딩 HTTP 에러: ${res.status}`);
     const data = await res.json();
     if (!data.length) return null;
-    return data[0]; // { name, local_names?, ... }
+    return data[0];
   }
 
-  /** 현재 날씨 */
   async function fetchCurrentWeather(lat, lon) {
     const url = `${CURRENT_API_URL}?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=kr`;
     const response = await fetch(url);
@@ -520,7 +613,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const prettyDescription = getPrettyDescription(id, rawDescription);
     const iconCode = data.weather?.[0]?.icon;
 
-    // 날짜/시간 (도시 현지)
     if (typeof data.dt === "number" && typeof data.timezone === "number") {
       const localMs = (data.dt + data.timezone) * 1000;
       const localDate = new Date(localMs);
@@ -529,7 +621,6 @@ document.addEventListener("DOMContentLoaded", () => {
       currentDateEl.textContent = "";
     }
 
-    // 일출/일몰
     sunInfoText = "";
     if (
       typeof data.sys?.sunrise === "number" &&
@@ -543,7 +634,6 @@ document.addEventListener("DOMContentLoaded", () => {
       sunInfoText = `${formatTime(sunriseDate)} / ${formatTime(sunsetDate)}`;
     }
 
-    // 위치 (한글 + 영어)
     const cityName = data.name;
     const country = data.sys?.country;
 
@@ -565,16 +655,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const parts = [];
     if (displayName) parts.push(displayName);
     if (country) parts.push(country);
-
     const fullLabel = parts.join(", ");
     currentLocationEl.textContent = fullLabel || "";
 
-    // 최근 검색 추가
-    if (fullLabel) {
-      addRecent(fullLabel);
+    const recentsLabel = lastLocationKo || lastLocationEn || cityName || "";
+    if (recentsLabel) {
+      addRecent(recentsLabel);
     }
 
-    // 아이콘
     if (iconCode) {
       currentIconEl.src = getIconUrl(iconCode);
       currentIconEl.alt = prettyDescription || rawDescription || "날씨 아이콘";
@@ -593,6 +681,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       currentTempC = null;
       tempEl.textContent = "";
+      tempEl.classList.remove("temp-cold", "temp-warm");
     }
 
     if (typeof feels === "number") {
@@ -610,9 +699,11 @@ document.addEventListener("DOMContentLoaded", () => {
     renderExtraInfo();
 
     descEl.textContent = prettyDescription || rawDescription || "";
+
+    renderLifeIndex();
+    updateFavoriteStars();
   }
 
-  /** 예보(3시간 간격) → 오늘/3일/24시간 정리 */
   async function fetchForecast(lat, lon) {
     const url = `${FORECAST_API_URL}?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=kr`;
     const response = await fetch(url);
@@ -621,13 +712,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const data = await response.json();
     const list = data.list || [];
 
-    const dailyMap = {}; // dateKey -> {rep, items[]}
+    const dailyMap = {};
     const now = new Date();
     const todayKey = getLocalDateKey(now);
 
-    const points = []; // 시간별용
+    const points = [];
 
-    // 예보 데이터 전체 한 번 순회
     for (const item of list) {
       const dtLocal = new Date(item.dt * 1000);
       const dateKey = getLocalDateKey(dtLocal);
@@ -653,7 +743,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // --- 오늘 최고/최저 + 강수확률 ---
     todayHighC = null;
     todayLowC = null;
     todayPop = null;
@@ -671,12 +760,12 @@ document.addEventListener("DOMContentLoaded", () => {
         todayLowC = Math.min(...temps);
       }
       if (pops.length) {
-        todayPop = Math.max(...pops); // 그날 중 가장 높은 강수확률
+        todayPop = Math.max(...pops);
       }
     }
     renderTodayExtras();
+    renderLifeIndex();
 
-    // --- 내일/모레/글피 3일 ---
     const futureKeys = Object.keys(dailyMap)
       .filter((k) => k > todayKey)
       .sort();
@@ -726,7 +815,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     renderForecast();
 
-    // --- 시간별 24시간 ---
     const nowMs = now.getTime();
     const hourly = [];
 
@@ -759,9 +847,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     hourlyForecast = hourly;
     renderHourlyForecast();
+    renderLifeIndex();
   }
 
-  /** 위도/경도로 전체 날씨 */
   async function getWeatherByCoords(lat, lon) {
     try {
       lastLat = lat;
@@ -781,6 +869,7 @@ document.addEventListener("DOMContentLoaded", () => {
       handleError(error);
       currentTempC = null;
       tempEl.textContent = "";
+      tempEl.classList.remove("temp-cold", "temp-warm");
       descEl.textContent = "날씨 정보를 가져오지 못했습니다.";
       currentForecast = [];
       forecastListEl.innerHTML = "";
@@ -797,10 +886,11 @@ document.addEventListener("DOMContentLoaded", () => {
       sunInfoText = "";
       renderTodayExtras();
       renderExtraInfo();
+      renderLifeIndex();
+      updateFavoriteStars();
     }
   }
 
-  /** 최근 검색 드롭다운 표시/숨김 */
   function showRecentsDropdown() {
     if (!recentsDropdown) return;
     recentsDropdown.classList.remove("hidden");
@@ -811,13 +901,12 @@ document.addEventListener("DOMContentLoaded", () => {
     recentsDropdown.classList.add("hidden");
   }
 
-  /** 도시명으로 전체 날씨 */
   async function getWeather(city) {
-    // 검색 실행 시 구글처럼 드롭다운 닫기
     hideRecentsDropdown();
 
     if (!city) {
       tempEl.textContent = "";
+      tempEl.classList.remove("temp-cold", "temp-warm");
       descEl.textContent = "도시명을 입력해주세요.";
       currentTempC = null;
       currentForecast = [];
@@ -835,6 +924,8 @@ document.addEventListener("DOMContentLoaded", () => {
       sunInfoText = "";
       renderTodayExtras();
       renderExtraInfo();
+      renderLifeIndex();
+      updateFavoriteStars();
       return;
     }
 
@@ -847,10 +938,20 @@ document.addEventListener("DOMContentLoaded", () => {
         (location.local_names && location.local_names.ko) || null;
 
       await getWeatherByCoords(lat, lon);
+
+      if (cityInput) {
+        if (lastLocationKo) cityInput.value = lastLocationKo;
+        else if (lastLocationEn) cityInput.value = lastLocationEn;
+        else cityInput.value = city;
+      }
+
+      updateFavoriteStars();
+      saveState();
     } catch (error) {
       handleError(error);
       currentTempC = null;
       tempEl.textContent = "";
+      tempEl.classList.remove("temp-cold", "temp-warm");
       descEl.textContent = "해당 도시의 날씨를 찾을 수 없습니다.";
       currentForecast = [];
       forecastListEl.innerHTML = "";
@@ -867,10 +968,11 @@ document.addEventListener("DOMContentLoaded", () => {
       sunInfoText = "";
       renderTodayExtras();
       renderExtraInfo();
+      renderLifeIndex();
+      updateFavoriteStars();
     }
   }
 
-  /** 새로고침 시 저장된 상태에서 복원 */
   async function restoreFromStorage() {
     const saved = loadState();
 
@@ -880,10 +982,15 @@ document.addEventListener("DOMContentLoaded", () => {
       applyTheme("light");
     }
 
-    // 즐겨찾기, 최근검색, 단위
     if (saved) {
       favorites = Array.isArray(saved.favorites) ? saved.favorites : [];
       recents = Array.isArray(saved.recents) ? saved.recents : [];
+      recents = recents
+        .map((label) =>
+          typeof label === "string" ? label.split(",")[0].trim() : ""
+        )
+        .filter(Boolean);
+
       renderFavorites();
       renderRecents();
 
@@ -908,46 +1015,44 @@ document.addEventListener("DOMContentLoaded", () => {
       if (lastLat != null && lastLon != null) {
         await getWeatherByCoords(lastLat, lastLon);
       }
+
+      updateFavoriteStars();
     } else {
       favorites = [];
       recents = [];
       renderFavorites();
       renderRecents();
+      updateFavoriteStars();
     }
   }
 
-  /** 현재 위치를 즐겨찾기에 추가 */
-  function addCurrentToFavorites() {
-    const locText = currentLocationEl.textContent.trim();
-    if (!locText) {
-      descEl.textContent = "먼저 위치를 조회한 뒤 즐겨찾기에 추가할 수 있습니다.";
+  function toggleCurrentFavorite() {
+    const label = getCurrentFavoriteLabel();
+    if (!label) {
+      descEl.textContent = "먼저 위치를 조회한 뒤 즐겨찾기로 등록할 수 있습니다.";
       return;
     }
 
-    const label = locText.split(",")[0].trim(); // "서울 (Seoul)" 부분
-
-    const exists = favorites.some((f) => f.label === label);
-    if (exists) {
-      descEl.textContent = "이미 즐겨찾기에 추가된 지역입니다.";
-      return;
-    }
-
-    const newFav = {
-      label,
-      ko: lastLocationKo,
-      en: lastLocationEn,
-    };
-
-    favorites = [newFav, ...favorites];
-    if (favorites.length > 5) {
-      favorites = favorites.slice(0, 5);
+    const index = favorites.findIndex((f) => f.label === label);
+    if (index !== -1) {
+      favorites.splice(index, 1);
+    } else {
+      const newFav = {
+        label,
+        ko: lastLocationKo,
+        en: lastLocationEn,
+      };
+      favorites = [newFav, ...favorites];
+      if (favorites.length > 5) {
+        favorites = favorites.slice(0, 5);
+      }
     }
 
     renderFavorites();
+    updateFavoriteStars();
     saveState();
   }
 
-  /** 초기 화면으로 리셋 */
   function resetToInitialView() {
     if (cityInput) cityInput.value = "";
 
@@ -959,6 +1064,7 @@ document.addEventListener("DOMContentLoaded", () => {
     currentDateEl.textContent = "";
     currentLocationEl.textContent = "";
     tempEl.textContent = "";
+    tempEl.classList.remove("temp-cold", "temp-warm");
     descEl.textContent = "";
 
     currentIconEl.src = "";
@@ -968,8 +1074,10 @@ document.addEventListener("DOMContentLoaded", () => {
     todayRangeEl.textContent = "";
     todayPopEl.textContent = "";
     feelsLikeEl.textContent = "";
+    feelsLikeEl.classList.remove("temp-cold", "temp-warm");
     humidityEl.textContent = "";
     sunInfoEl.textContent = "";
+    if (lifeIndexEl) lifeIndexEl.textContent = "";
 
     currentTempC = null;
     currentFeelsLikeC = null;
@@ -981,17 +1089,16 @@ document.addEventListener("DOMContentLoaded", () => {
     hourlyListEl.innerHTML = "";
     currentForecast = [];
     forecastListEl.innerHTML = "";
+
+    updateFavoriteStars();
   }
 
-  /** 이벤트 연결 */
   function setupEventListeners() {
-    // 검색 버튼
     searchBtn.addEventListener("click", () => {
       const city = cityInput.value.trim();
       getWeather(city);
     });
 
-    // Enter 검색
     cityInput.addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
         const city = cityInput.value.trim();
@@ -999,7 +1106,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // 검색창 포커스 -> 최근 검색 드롭다운 표시
+    cityInput.addEventListener("input", () => {
+      updateFavoriteStars();
+    });
+
     cityInput.addEventListener("focus", () => {
       if (recentsHideTimeout) {
         clearTimeout(recentsHideTimeout);
@@ -1008,14 +1118,12 @@ document.addEventListener("DOMContentLoaded", () => {
       showRecentsDropdown();
     });
 
-    // 검색창 포커스 아웃 -> 약간 딜레이 후 숨김 (chip 클릭 이벤트 처리 위해)
     cityInput.addEventListener("blur", () => {
       recentsHideTimeout = setTimeout(() => {
         hideRecentsDropdown();
       }, 150);
     });
 
-    // 현재 위치 버튼
     geoBtn.addEventListener("click", () => {
       if (!("geolocation" in navigator)) {
         descEl.textContent = "이 브라우저에서는 위치 정보를 지원하지 않습니다.";
@@ -1030,14 +1138,8 @@ document.addEventListener("DOMContentLoaded", () => {
         (position) => {
           const { latitude, longitude } = position.coords;
 
-          // 현재 위치로 찾기 누르면 검색창 비우기
-          if (cityInput) {
-            cityInput.value = "";
-          }
-
           (async () => {
             try {
-              // 한글/영문 지역명 얻기
               const rev = await getReverseGeocode(latitude, longitude);
               if (rev) {
                 lastLocationEn = rev.name || null;
@@ -1049,6 +1151,15 @@ document.addEventListener("DOMContentLoaded", () => {
               }
 
               await getWeatherByCoords(latitude, longitude);
+
+              if (cityInput) {
+                if (lastLocationKo) cityInput.value = lastLocationKo;
+                else if (lastLocationEn) cityInput.value = lastLocationEn;
+                else cityInput.value = "";
+              }
+
+              updateFavoriteStars();
+              saveState();
             } catch (err) {
               handleError(err);
               descEl.textContent = "현재 위치를 가져올 수 없습니다.";
@@ -1072,7 +1183,6 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     });
 
-    // 단위 전환 버튼
     unitButtons.forEach((btn) => {
       btn.addEventListener("click", () => {
         const selectedUnit = btn.dataset.unit;
@@ -1089,11 +1199,11 @@ document.addEventListener("DOMContentLoaded", () => {
         renderExtraInfo();
         renderForecast();
         renderHourlyForecast();
+        renderLifeIndex();
         saveState();
       });
     });
 
-    // 다크 모드 토글 버튼들
     themeButtons.forEach((btn) => {
       btn.addEventListener("click", () => {
         const nextTheme = btn.dataset.theme;
@@ -1102,14 +1212,12 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-    // 즐겨찾기 추가 버튼
     if (addFavoriteBtn) {
       addFavoriteBtn.addEventListener("click", () => {
-        addCurrentToFavorites();
+        toggleCurrentFavorite();
       });
     }
 
-    // 제목 클릭 -> 초기 화면으로
     if (titleEl) {
       titleEl.addEventListener("click", () => {
         resetToInitialView();
@@ -1117,8 +1225,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // 초기화
   setupEventListeners();
-  // 새로고침 시 마지막 상태 복원
   restoreFromStorage();
 });

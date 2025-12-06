@@ -9,28 +9,43 @@
 <body>
   <main class="app">
     <section class="weather-card">
-      <!-- 제목 + 다크모드 토글 -->
+      <!-- 제목(홈 아이콘) + 다크모드 토글 -->
       <div class="card-header">
-        <h1 class="title">원하는 지역을 검색해주세요</h1>
+        <h1 class="title" aria-label="처음 화면으로 가기">
+          <span class="home-icon" aria-hidden="true">🏠</span>
+        </h1>
         <div class="theme-toggle-group" aria-label="테마 선택">
-          <button class="theme-btn" data-theme="light">라이트</button>
-          <button class="theme-btn" data-theme="dark">다크</button>
+          <button
+            class="theme-btn"
+            data-theme="light"
+            aria-label="라이트 모드"
+          >
+            <span class="theme-icon" aria-hidden="true">☀️</span>
+          </button>
+          <button
+            class="theme-btn"
+            data-theme="dark"
+            aria-label="다크 모드"
+          >
+            <span class="theme-icon" aria-hidden="true">🌙</span>
+          </button>
         </div>
       </div>
 
-      <!-- 검색 -->
+      <!-- 검색창 + 검색 버튼 (⭐ 검색창 안 즐겨찾기 버튼 제거됨) -->
       <div class="search-box">
-        <input
-          type="text"
-          id="cityInput"
-          class="search-input"
-          placeholder="도시명을 한글 또는 영어로 입력 (예: 서울, Seoul)"
-          autocomplete="off"
-        />
+        <div class="search-input-wrapper">
+          <input
+            type="text"
+            id="cityInput"
+            class="search-input"
+            autocomplete="off"
+          />
+        </div>
         <button id="searchBtn" class="search-btn">검색</button>
       </div>
 
-      <!-- 최근 검색 드롭다운 (검색창 클릭 시 표시) -->
+      <!-- 최근 검색 드롭다운 -->
       <div id="recentsDropdown" class="recents-dropdown hidden">
         <div class="list-header">
           <span class="list-label">최근 검색</span>
@@ -52,15 +67,30 @@
       <div class="lists-row">
         <div class="list-block">
           <div class="list-header">
-            <span class="list-label">즐겨찾기</span>
-            <button id="addFavoriteBtn" class="add-fav-btn">+ 추가</button>
+            <span class="list-label">
+              <span class="fav-section-star">★</span>
+              즐겨찾기
+            </span>
+            <!-- ✅ 여기 +추가 버튼 배치 -->
+            <button
+              id="addFavoriteBtn"
+              class="fav-add-btn"
+              type="button"
+            >
+              + 추가
+            </button>
           </div>
           <div id="favoritesList" class="chip-list"></div>
         </div>
       </div>
 
-      <!-- 현재 날씨 (초기엔 숨김) -->
+      <!-- 현재 날씨 -->
       <div class="weather-info hidden" id="weatherInfo">
+        <!-- 생활지수 -->
+        <div class="life-index-wrapper">
+          <span id="lifeIndex" class="life-index"></span>
+        </div>
+
         <!-- 오늘 / 날짜 / 위치 -->
         <div class="current-header">
           <span id="currentLabel" class="current-label">오늘</span>
@@ -109,23 +139,17 @@
         </div>
       </div>
 
-      <!-- 시간별 예보 24시간 (현재 ~ +24시간) -->
+      <!-- 시간별 예보 24시간 -->
       <section class="hourly-section hidden" id="hourlySection">
         <h2 class="hourly-title">시간별 예보 (24시간)</h2>
-        <div id="hourlyList" class="hourly-list">
-          <!-- JS에서 24개 카드 생성 -->
-        </div>
+        <div id="hourlyList" class="hourly-list"></div>
       </section>
 
       <!-- 3일 단기 예보 -->
       <section class="forecast-section hidden" id="forecastSection">
         <h2 class="forecast-title">3일 단기 예보</h2>
-        <div id="forecastList" class="forecast-list">
-          <!-- JS에서 3개 카드 반복 생성 -->
-        </div>
+        <div id="forecastList" class="forecast-list"></div>
       </section>
-
-      <p class="hint">OpenWeatherMap 더미 API URL 사용 예제입니다.</p>
     </section>
   </main>
 

@@ -1015,14 +1015,12 @@ document.addEventListener("DOMContentLoaded", () => {
       lastLocationKo = saved.lastLocationKo || null;
       lastLocationEn = saved.lastLocationEn || null;
 
+      // 🔁 항상 초기 진입 시 검색창은 비워두기
       if (cityInput) {
-        if (lastLocationKo || lastLocationEn) {
-          cityInput.value = lastLocationKo || lastLocationEn;
-        } else {
-          cityInput.value = "";
-        }
+        cityInput.value = "";
       }
 
+      // 자동으로 마지막 위치 날씨 가져오지 않음
       //if (lastLat != null && lastLon != null) {
       //  await getWeatherByCoords(lastLat, lastLon);
       //}

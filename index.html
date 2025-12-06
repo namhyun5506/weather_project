@@ -9,8 +9,16 @@
 <body>
   <main class="app">
     <section class="weather-card">
-      <h1 class="title">원하는 지역을 검색해주세요</h1>
+      <!-- 제목 + 다크모드 토글 -->
+      <div class="card-header">
+        <h1 class="title">원하는 지역을 검색해주세요</h1>
+        <div class="theme-toggle-group" aria-label="테마 선택">
+          <button class="theme-btn" data-theme="light">라이트</button>
+          <button class="theme-btn" data-theme="dark">다크</button>
+        </div>
+      </div>
 
+      <!-- 검색 -->
       <div class="search-box">
         <input
           type="text"
@@ -22,13 +30,32 @@
         <button id="searchBtn" class="search-btn">검색</button>
       </div>
 
-      <!-- 현재 위치 + 단위 토글 한 줄 -->
+      <!-- 최근 검색 드롭다운 (검색창 클릭 시 표시) -->
+      <div id="recentsDropdown" class="recents-dropdown hidden">
+        <div class="list-header">
+          <span class="list-label">최근 검색</span>
+        </div>
+        <div id="recentsList" class="chip-list"></div>
+      </div>
+
+      <!-- 현재 위치 + 단위 토글 -->
       <div class="controls-row">
         <button id="geoBtn" class="geo-btn">현재 위치로 찾기</button>
 
         <div class="unit-toggle" aria-label="온도 단위 선택">
           <button class="unit-btn active" data-unit="C">°C</button>
           <button class="unit-btn" data-unit="F">°F</button>
+        </div>
+      </div>
+
+      <!-- 즐겨찾기 -->
+      <div class="lists-row">
+        <div class="list-block">
+          <div class="list-header">
+            <span class="list-label">즐겨찾기</span>
+            <button id="addFavoriteBtn" class="add-fav-btn">+ 추가</button>
+          </div>
+          <div id="favoritesList" class="chip-list"></div>
         </div>
       </div>
 
@@ -61,6 +88,22 @@
           <span id="todayPop" class="today-pop"></span>
         </div>
 
+        <!-- 체감온도 / 습도 / 일출/일몰 -->
+        <div class="extra-info-row">
+          <div class="extra-item">
+            <span class="extra-label">체감온도</span>
+            <span id="feelsLike" class="extra-value"></span>
+          </div>
+          <div class="extra-item">
+            <span class="extra-label">습도</span>
+            <span id="humidity" class="extra-value"></span>
+          </div>
+          <div class="extra-item">
+            <span class="extra-label">일출/일몰</span>
+            <span id="sunInfo" class="extra-value small"></span>
+          </div>
+        </div>
+
         <div class="desc-wrapper">
           <span id="description" class="description"></span>
         </div>
@@ -74,9 +117,9 @@
         </div>
       </section>
 
-      <!-- 3일 단기 예보 (내일/모레/글피) -->
+      <!-- 3일 단기 예보 -->
       <section class="forecast-section hidden" id="forecastSection">
-        <h2 class="forecast-title">3일 단기 예보 (내일 ~ 글피)</h2>
+        <h2 class="forecast-title">3일 단기 예보</h2>
         <div id="forecastList" class="forecast-list">
           <!-- JS에서 3개 카드 반복 생성 -->
         </div>

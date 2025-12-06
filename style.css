@@ -37,7 +37,7 @@ body {
 /* 카드 스타일 레이아웃 */
 .weather-card {
   width: 100%;
-  max-width: 1000px;                 /* ★ 여기 1000px로 확장 */
+  max-width: 1000px;
   background: rgba(255, 255, 255, 0.9);
   border-radius: 1.25rem;
   padding: 1.75rem 1.5rem 1.5rem;
@@ -45,20 +45,60 @@ body {
   backdrop-filter: blur(10px);
 }
 
+/* 상단 헤더 (제목 + 다크모드 토글) */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+
 /* 제목 */
 .title {
-  margin: 0 0 1.25rem;
-  text-align: center;
+  margin: 0;
+  text-align: left;
   font-size: 1.4rem;
   font-weight: 700;
   color: #0f172a;
+  cursor: pointer;
+}
+
+/* 다크 모드 토글 (°C/°F 토글과 동일 스타일) */
+.theme-toggle-group {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  background-color: #eff6ff;
+  border-radius: 999px;
+  padding: 0.15rem;
+  border: 1px solid #dbeafe;
+}
+
+.theme-btn {
+  border: none;
+  background: transparent;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.theme-btn.active {
+  background: white;
+  color: #0f172a;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
 }
 
 /* 검색 영역 */
 .search-box {
   display: flex;
   gap: 0.5rem;
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.4rem;
 }
 
 .search-input {
@@ -104,13 +144,23 @@ body {
   opacity: 0.9;
 }
 
+/* 최근 검색 드롭다운 */
+.recents-dropdown {
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+  padding: 0.4rem 0.6rem 0.5rem;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+}
+
 /* 현재 위치 + 단위 토글 한 줄 */
 .controls-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 0.75rem;
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.5rem;
 }
 
 /* 현재 위치 버튼 */
@@ -166,6 +216,92 @@ body {
   background: white;
   color: #0f172a;
   box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
+}
+
+/* 즐겨찾기 / 리스트 공통 */
+.lists-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.7rem;
+  font-size: 0.8rem;
+}
+
+.list-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.list-label {
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.add-fav-btn {
+  border: none;
+  background: #e5f4ff;
+  color: #0369a1;
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.add-fav-btn:hover {
+  background-color: #dbeafe;
+  box-shadow: 0 2px 6px rgba(148, 163, 184, 0.4);
+}
+
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  min-height: 1.2rem;
+}
+
+.chip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 999px;
+  padding: 0.25rem 0.7rem 0.25rem 0.8rem;
+  font-size: 0.78rem;
+  border: 1px solid #d1d5db;
+  background-color: #f9fafb;
+  cursor: pointer;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.chip-btn:hover {
+  background-color: #e5f2ff;
+  box-shadow: 0 2px 6px rgba(148, 163, 184, 0.4);
+}
+
+.chip-label {
+  white-space: nowrap;
+}
+
+.chip-close {
+  font-size: 0.9rem;
+  color: #9ca3af;
+  padding: 0 2px;
+}
+
+.chip-close:hover {
+  color: #6b7280;
+}
+
+.empty-text {
+  font-size: 0.75rem;
+  color: #9ca3af;
 }
 
 /* 현재 날씨 정보 영역 */
@@ -238,6 +374,37 @@ body {
   white-space: nowrap;
 }
 
+/* 체감온도 / 습도 / 일출일몰 */
+.extra-info-row {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.4rem;
+}
+
+.extra-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  min-width: 80px;
+}
+
+.extra-label {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.extra-value {
+  font-size: 0.85rem;
+  color: #0f172a;
+}
+
+.extra-value.small {
+  font-size: 0.78rem;
+}
+
 .desc-wrapper {
   min-height: 1.25rem;
 }
@@ -266,7 +433,7 @@ body {
 .hourly-list {
   display: flex;
   gap: 0.5rem;
-  overflow-x: auto;    /* 항상 가로 스크롤 */
+  overflow-x: auto;
   padding-bottom: 0.35rem;
 }
 
@@ -310,7 +477,7 @@ body {
   color: #6b7280;
 }
 
-/* 3일 단기 예보 (내일/모레/글피) */
+/* 3일 단기 예보 */
 .forecast-section {
   margin-top: 1.1rem;
   border-top: 1px solid #e5e7eb;
@@ -376,11 +543,11 @@ body {
   color: #9ca3af;
 }
 
-/* 반응형: 태블릿 이상에서 카드 살짝 확대 */
+/* 반응형: 태블릿 이상 */
 @media (min-width: 768px) {
   .weather-card {
     padding: 2rem 2rem 1.75rem;
-    max-width: 1000px;          /* ★ 여기서도 1000px 유지 */
+    max-width: 1000px;
   }
 
   .title {
@@ -403,16 +570,137 @@ body {
   .hourly-card {
     min-width: 80px;
   }
+
+  .lists-row {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .list-block {
+    flex: 1;
+  }
 }
 
-/* 반응형: 데스크탑에서 여백 조정 */
+/* 반응형: 데스크탑 */
 @media (min-width: 1024px) {
   .app {
     padding: 2.5rem;
   }
 
   .weather-card {
-    max-width: 1000px;          /* ★ 데스크탑에서도 1000px */
+    max-width: 1000px;
     border-radius: 1.5rem;
   }
+}
+
+/* 다크 모드 */
+body.dark {
+  background: radial-gradient(circle at top, #020617, #020617);
+  color: #e5e7eb;
+}
+
+body.dark .weather-card {
+  background: rgba(15, 23, 42, 0.97);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.75);
+}
+
+body.dark .title,
+body.dark .current-label,
+body.dark .current-location,
+body.dark .hourly-title,
+body.dark .forecast-title {
+  color: #e5e7eb;
+}
+
+body.dark .temp {
+  color: #e5e7eb;
+}
+
+body.dark .extra-value,
+body.dark .extra-value.small,
+body.dark .hourly-temp,
+body.dark .forecast-temp {
+  color: #e5e7eb;
+}
+
+body.dark .search-input {
+  background-color: #020617;
+  border-color: #1f2937;
+  color: #e5e7eb;
+}
+
+body.dark .search-input::placeholder {
+  color: #6b7280;
+}
+
+body.dark .recents-dropdown {
+  background-color: #020617;
+  border-color: #1f2937;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.6);
+}
+
+body.dark .search-btn {
+  box-shadow: 0 8px 18px rgba(34, 197, 94, 0.4);
+}
+
+/* 라이트모드와 비슷하게 또렷한 버튼 느낌 유지 */
+body.dark .geo-btn {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+body.dark .unit-toggle,
+body.dark .theme-toggle-group {
+  background-color: #020617;
+  border-color: #1f2937;
+}
+
+body.dark .unit-btn,
+body.dark .theme-btn {
+  color: #9ca3af;
+}
+
+body.dark .unit-btn.active,
+body.dark .theme-btn.active {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+body.dark .weather-info,
+body.dark .hourly-section,
+body.dark .forecast-section {
+  border-top-color: #1f2937;
+}
+
+body.dark .hourly-list {
+  background-color: #020617;
+}
+
+body.dark .hourly-card,
+body.dark .forecast-card {
+  background-color: #020617;
+  border-color: #1f2937;
+}
+
+body.dark .description {
+  color: #e5e7eb;
+}
+
+body.dark .hint {
+  color: #6b7280;
+}
+
+body.dark .chip-btn {
+  background-color: #020617;
+  border-color: #1f2937;
+  color: #e5e7eb;
+}
+
+body.dark .chip-btn:hover {
+  background-color: #020617;
+}
+
+body.dark .list-label {
+  color: #9ca3af;
 }

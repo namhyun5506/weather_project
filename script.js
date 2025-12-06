@@ -1023,9 +1023,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
-      if (lastLat != null && lastLon != null) {
-        await getWeatherByCoords(lastLat, lastLon);
-      }
+      //if (lastLat != null && lastLon != null) {
+      //  await getWeatherByCoords(lastLat, lastLon);
+      //}
 
       updateFavoriteStars();
     } else {
